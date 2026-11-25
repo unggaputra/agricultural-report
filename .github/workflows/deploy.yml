@@ -21,14 +21,15 @@ jobs:
       - name: Install Dependensi Composer
         run: composer install --no-dev --optimize-autoloader --no-interaction
 
-      - name: Setup Node.js & Build Assets
+      - name: Setup Node.js & Build Assets (Jika Ada)
         uses: actions/setup-node@v4
         with:
           node-version: '20'
       - run: |
           if [ -f package.json ]; then
-            npm ci
-            npm run build
+            npm install
+            npm run build --if-present
+            npm run prod --if-present
           fi
 
       - name: Sinkronisasi file ke server FTP
