@@ -26,7 +26,7 @@
                             @endforeach
                         </select>
 
-                        <a href="{{ url()->current() }}" class="btn btn-sm btn-outline-secondary">Reset</a>
+                        <a href="{{ url()->current() }}" class="btn btn-primary">Reset</a>
                     </form>
                     <small class="text-muted d-block mt-2">
                         Filter berlaku untuk kartu serta grafik per desa, varietas, hubungan pupuk-hasil, dan gagal panen.

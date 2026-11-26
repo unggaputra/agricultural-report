@@ -5,7 +5,7 @@
           <span class="copyright">
             © <script>
               document.write(new Date().getFullYear())
-            </script>, Made by Ungga Putra
+            </script>, by Ungga Putra
           </span>
         </div>
       </div>
