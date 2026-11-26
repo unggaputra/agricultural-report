@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AddController;
 use App\Http\Controllers\BibitController;
-use App\Http\Controllers\ChartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesaController;
@@ -12,7 +11,6 @@ use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\PetaniController;
 use App\Http\Controllers\PupukController;
 use App\Http\Controllers\RiwayatController;
-use App\Http\Controllers\TableController;
 use App\Http\Controllers\TransaksiController;
 
 
@@ -34,7 +32,7 @@ Route::get('db_test',function ()
 
 Route::get('/', [DashboardController::class, 'chart']);
 
-Route::get('/table',[TableController::class,'view']);
+Route::get('/table', [EditController::class, 'view']);
 Route::get('/dashboard',[EditController::class,'view']);
 Route::get('/add',[AddController::class,'view']);
 Route::post('/petani/store',[PetaniController::class,'store']);
@@ -88,8 +86,6 @@ Route::get('/chart',[DashboardController::class,'chart']);
 
 // Route::get('/add',[AddController::class,'view']);
 
-// Route::get('/table',[TableController::class,'pupuk']);
-
 
 // Route::get('/table', function () {
 //     return view('contents.table');
@@ -98,5 +94,3 @@ Route::get('/chart',[DashboardController::class,'chart']);
 Route::get('/report', [DashboardController::class, 'chart']);
 
 // Data
-Route::get('getDataPie',[ChartController::class,'getDataPie']);
-Route::get('getDataLine',[ChartController::class,'getDataLine']);

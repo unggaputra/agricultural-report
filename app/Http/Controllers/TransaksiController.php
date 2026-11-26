@@ -7,38 +7,68 @@ use Illuminate\Support\Facades\DB;
 
 class TransaksiController extends Controller
 {
-    public function store(Request $request){
-        Db::table('riwayat_pembelian_pupuk')
-        ->insert([
-            'id_petani'=>$request->id_petani,
-            'id_pupuk'=>$request->id_pupuk,
-            'jumlah_karung'=>$request->jumlah
+    private function rules(): array
+    {
+        return [
+            'id_petani'    => 'required|exists:petani,id_petani',
+            'id_pupuk'     => 'required|exists:pupuk,id_pupuk',
+            'tanggal_beli' => 'required|date',
+            'jumlah'       => 'required|integer|min:1',
+        ];
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate($this->rules());
+
+        DB::table('riwayat_pembelian_pupuk')->insert([
+            'id_petani'     => $data['id_petani'],
+            'id_pupuk'      => $data['id_pupuk'],
+            'tanggal_beli'  => $data['tanggal_beli'],
+            'jumlah_karung' => $data['jumlah'],
         ]);
-        return redirect('/dashboard');
+
+        return redirect('/dashboard')->with('success', 'Pembelian pupuk ditambahkan.');
     }
 
-    public function edit($val){
-        $petani = DB::table('petani')->get();
-        $pupuk = DB::table('pupuk')->get();
-        $riwayat_pembelian_pupuk = DB::table('riwayat_pembelian_pupuk')
-                    ->join('petani', 'riwayat_pembelian_pupuk.id_petani', '=', 'petani.id_petani')
-                    ->join('pupuk', 'riwayat_pembelian_pupuk.id_pupuk', '=', 'pupuk.id_pupuk')
-                    ->select('riwayat_pembelian_pupuk.*', 'petani.nama_petani', 'pupuk.nama_pupuk')
-                    ->where('id_transaksi', $val)
-                    ->get();
-        return view('Edit.edittransaksi',['petani'=>$petani, 'pupuk'=>$pupuk, 'riwayat_pembelian_pupuk'=>$riwayat_pembelian_pupuk]);
+    public function edit($id)
+    {
+        $transaksi = DB::table('riwayat_pembelian_pupuk')
+            ->where('id_transaksi', $id)
+            ->first();
+        abort_if(!$transaksi, 404);
+
+        $petani = DB::table('petani')->orderBy('nama_petani')->get();
+        $pupuk  = DB::table('pupuk')->get();
+
+        return view('Edit.edittransaksi', [
+            'transaksi' => $transaksi,
+            'petani'    => $petani,
+            'pupuk'     => $pupuk,
+        ]);
     }
 
-    public function update(Request $request){
+    public function update(Request $request)
+    {
+        $request->validate(['id' => 'required|exists:riwayat_pembelian_pupuk,id_transaksi']);
+        $data = $request->validate($this->rules());
+
         DB::table('riwayat_pembelian_pupuk')
-        ->where('id_transaksi', $request->id)
-        ->update(['id_petani'=>$request->id_petani, 'id_pupuk'=>$request->id_pupuk, 'jumlah_karung'=>$request->jumlah]);
-        return redirect('/dashboard');
+            ->where('id_transaksi', $request->id)
+            ->update([
+                'id_petani'     => $data['id_petani'],
+                'id_pupuk'      => $data['id_pupuk'],
+                'tanggal_beli'  => $data['tanggal_beli'],
+                'jumlah_karung' => $data['jumlah'],
+            ]);
+
+        return redirect('/dashboard')->with('success', 'Pembelian pupuk diperbarui.');
     }
 
-    public function delete($val){
-        DB::table('riwayat_pembelian_pupuk')->where('id_transaksi', $val)->delete();
-        return redirect('/dashboard');
+    public function delete($id)
+    {
+        DB::table('riwayat_pembelian_pupuk')->where('id_transaksi', $id)->delete();
+
+        return redirect('/dashboard')->with('success', 'Pembelian pupuk dihapus.');
     }
 }
-

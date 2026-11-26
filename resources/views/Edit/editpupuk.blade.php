@@ -1,45 +1,52 @@
 @extends('dashboard')
 @section('Content')
-    <div class="content">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title"> Edit Data</h4>
-                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="pills-bibit-tab" data-toggle="pill" href="#pills-bibit"
-                                    role="tab" aria-controls="pills-bibit" aria-selected="true">Pupuk</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content" id="pills-tabContent">
-                            <div class="tab-pane fade show active" id="pills-pupuk" role="tabpanel" aria-labelledby="pills-pupuk-tab">
-                                <div class="" style="height: 230px">
-                                    <table class="table">
-                                        @foreach ($pupuk as $val)
-                                        <form action="/pupuk/update" method="post">
-                                            @csrf
-                                        <div class="col-md-3 px-1">
-                                            <div class="form-group">
-                                                    <label>Nama Pupuk</label>
-                                                    <input type="hidden" id="disabledTextInput" class="form-control" name="id" value="{{$val->id_pupuk}}">
-                                                     <input type="text" class="form-control" name="nama" value="{{$val->nama_pupuk}}">
-                                                     <label>Jenis Pupuk</label>
-                                                    <input type="text" class="form-control" name="jenis" value="{{$val->jenis_pupuk}}">
-                                                    <div class="update ml-auto mr-auto">
-                                                    <button type="submit" class="btn btn-primary btn-round">Simpan</button>
-                                                    </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                    @endforeach
-                                    </table>
-                                </div>
-                            </div>
+<div class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Edit Pupuk</h4>
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
-                  </div>
+                    @endif
+                </div>
+                <div class="card-body">
+                    <form action="/pupuk/update" method="post">
+                        @csrf
+                        <input type="hidden" name="id" value="{{ $pupuk->id_pupuk }}">
+                        <div class="row"><div class="col-md-4">
+                            <div class="form-group">
+                                <label>Nama Pupuk</label>
+                                <input type="text" class="form-control" name="nama" maxlength="35"
+                                       value="{{ old('nama', $pupuk->nama_pupuk) }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Jenis Pupuk</label>
+                                <select name="jenis" class="form-control" required>
+                                    @foreach (['Kimia', 'Organik'] as $j)
+                                        <option value="{{ $j }}" @selected(old('jenis', $pupuk->jenis_pupuk) === $j)>{{ $j }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Berat per Sak (kg)</label>
+                                <input type="number" min="0.1" step="0.1" class="form-control" name="kg_per_sak"
+                                       value="{{ old('kg_per_sak', $pupuk->kg_per_sak + 0) }}" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-round">Simpan</button>
+                            <a href="/dashboard" class="btn btn-round btn-outline-secondary">Batal</a>
+                        </div></div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 @endsection
